@@ -1,17 +1,17 @@
 Baseelem='manual2';
 SEM='Sigma';%Sigma or Quanta
 
-[litfile, litpath] = uigetfile('.txt','MultiSelect','off');
+[EDSfile, EDSpath] = uigetfile('.txt','MultiSelect','off');%select EDS file
 elemdat=readtable("Chemical-Elements-Properties.xlsx");
 if strcmp(SEM,'Quanta')
-    data=readtable([litpath,litfile],"Delimiter",{'	'},'NumHeaderLines',13,'ReadVariableNames',true);
+    data=readtable([EDSpath,EDSfile],"Delimiter",{'	'},'NumHeaderLines',13,'ReadVariableNames',true);
     vals=data(strcmp(data.InStats_,{'Yes'   }),:);
     err=data(~strcmp(data.InStats_,{'Yes'   }),:);
     varoffset=3;
     endoffset=1;
     signame='Std. deviation';
 elseif strcmp(SEM,'Sigma')
-    data=readtable([litpath,litfile],'NumHeaderLines',0,'ReadVariableNames',true);
+    data=readtable([EDSpath,EDSfile],'NumHeaderLines',0,'ReadVariableNames',true);
     data.Properties.VariableNames=[data.Properties.VariableNames{1},'Id',data.Properties.VariableNames(2:end-1)];
     vals=data(strcmp(data.Spectrum,{'Spectrum' }),:);
     err=data(~strcmp(data.Spectrum,{'Spectrum' }),:);
@@ -23,10 +23,12 @@ elseif strcmp(SEM,'Sigma')
 end
 numelements=numel(vals.Properties.VariableNames);
 %% segregation data - if we know which direction things go
+%{
 manualelem={'Ti','Ta','Ni','Nb','Mo','Fe','Cr','Co','Al','W'};
 manualcorr=[-1,1,-1,-1,-1,1,-1,-1,-1,1];
 manual=table(manualelem',manualcorr');
 manual.Properties.VariableNames={'elem','corr'};
+%}
 %% DEBUG - plot corrolation plot and a basic plot
 %{
 figure()
@@ -35,8 +37,8 @@ scatter(vals.Ni,vals.Ta)
 h=figure()
 corrplot(vals(:,3:numelements-1))
 figname='CorrPlot';
-saveas(h,[litfile(1:end-4),figname,'_base_',Baseelem],'tiffn')
-saveas(h,[litfile(1:end-4),figname,'_base_',Baseelem],'fig')
+saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem],'tiffn')
+saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem],'fig')
 
 %% rank sort
 rank=table();
@@ -97,8 +99,8 @@ ylabel('Density (g/cm^3)')
 xlabel('Fs')
 title('WIRS Density')
 figname='WIRS Density';
-saveas(h,[litfile(1:end-4),figname,'_base_',Baseelem],'tiffn')
-saveas(h,[litfile(1:end-4),figname,'_base_',Baseelem],'fig')
+saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem],'tiffn')
+saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem],'fig')
 %% plot compositions as a function of Fs
 h=figure();
 scatter(vals.WIRSFs,table2array(vals(:,3:numelements-1)))
@@ -107,8 +109,8 @@ xlabel('Fs')
 legend(vals.Properties.VariableNames{3:numelements-1})
 title('WIRS')
 figname='WIRS Composition TOT';
-saveas(h,[litfile(1:end-4),figname,'_base_',Baseelem],'tiffn')
-saveas(h,[litfile(1:end-4),figname,'_base_',Baseelem],'fig')
+saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem],'tiffn')
+saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem],'fig')
 %% another type of plot
 h=figure();
 for i=varoffset:numelements-endoffset
@@ -120,8 +122,8 @@ for i=varoffset:numelements-endoffset
 end
 sgtitle('WIRS')
 figname='WIRS';
-saveas(h,[litfile(1:end-4),figname,'_base_',Baseelem],'tiffn')
-saveas(h,[litfile(1:end-4),figname,'_base_',Baseelem],'fig')
+saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem],'tiffn')
+saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem],'fig')
 h=figure();
 for i=varoffset:numelements-endoffset
     subplot(3,4,i-varoffset+1)
@@ -137,5 +139,5 @@ xlabel('Fs')
 title(vals.Properties.VariableNames{i})
 sgtitle('Rank Sort')
 figname='Rank_Sort';
-saveas(h,[litfile(1:end-4),figname,'_base_',Baseelem],'tiffn')
-saveas(h,[litfile(1:end-4),figname,'_base_',Baseelem],'fig')
+saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem],'tiffn')
+saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem],'fig')
