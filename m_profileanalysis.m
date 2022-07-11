@@ -1,9 +1,22 @@
-Baseelem='manual2';
+%Core variables to adjust
+%---------------------------------------------------------------------------------------
+Baseelem='Nickel';
 SEM='Sigma';%Sigma or Quanta
+%----------------------------------------------------------------------------------------------
+%{
+%% segregation data - if we know which direction things go
 
+manualelem={'Ti','Ta','Ni','Nb','Mo','Fe','Cr','Co','Al','W'};
+manualcorr=[-1,1,-1,-1,-1,1,-1,-1,-1,1];
+manual=table(manualelem',manualcorr');
+manual.Properties.VariableNames={'elem','corr'};
+%}
+
+% read the files to create variables
 [EDSfile, EDSpath] = uigetfile('.txt','MultiSelect','off');%select EDS file
 elemdat=readtable("Chemical-Elements-Properties.xlsx");
 if strcmp(SEM,'Quanta')
+    %read the file as a table
     data=readtable([EDSpath,EDSfile],"Delimiter",{'	'},'NumHeaderLines',13,'ReadVariableNames',true);
     vals=data(strcmp(data.InStats_,{'Yes'   }),:);
     err=data(~strcmp(data.InStats_,{'Yes'   }),:);
@@ -22,13 +35,7 @@ elseif strcmp(SEM,'Sigma')
     endoffset=1;
 end
 numelements=numel(vals.Properties.VariableNames);
-%% segregation data - if we know which direction things go
-%{
-manualelem={'Ti','Ta','Ni','Nb','Mo','Fe','Cr','Co','Al','W'};
-manualcorr=[-1,1,-1,-1,-1,1,-1,-1,-1,1];
-manual=table(manualelem',manualcorr');
-manual.Properties.VariableNames={'elem','corr'};
-%}
+
 %% DEBUG - plot corrolation plot and a basic plot
 %{
 figure()
@@ -79,16 +86,21 @@ r = 1:length(aveWeightedRank);
 r(p) = r;
 vals.WIRS=r';
 
-%% assign solid fractions
+% assign solid fractions
 vals.rankFs=(vals.ranksort-0.5)./size(vals,1);
 vals.WIRSFs=(vals.WIRS-0.5)./size(vals,1);
 
+%{%
 %% find density
 %first extract density of every element
 elemdens=NaN(numelements,1);
 for i=varoffset:numelements-endoffset
     elem=vals.Properties.VariableNames{i};
-    elemdens(i)=elemdat.Density(strcmp(elemdat.Sym,elem));
+    if ~isempty(elemdat.Density(strcmp(elemdat.Sym,elem)))
+        elemdens(i)=elemdat.Density(strcmp(elemdat.Sym,elem));
+    elseif ~isempty(elemdat.Density(strcmp(elemdat.Element,elem)))
+        elemdens(i)=elemdat.Density(strcmp(elemdat.Element,elem));
+    end
 end
 vals.dens=sum(table2array(vals(:,varoffset:numelements-endoffset))...
     ./100.*repmat(elemdens(varoffset:numelements-endoffset)',size(vals,1),1),2);
@@ -101,6 +113,7 @@ title('WIRS Density')
 figname='WIRS Density';
 saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem],'tiffn')
 saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem],'fig')
+%}
 %% plot compositions as a function of Fs
 h=figure();
 scatter(vals.WIRSFs,table2array(vals(:,3:numelements-1)))
@@ -111,7 +124,7 @@ title('WIRS')
 figname='WIRS Composition TOT';
 saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem],'tiffn')
 saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem],'fig')
-%% another type of plot
+%% plot each element individually on a subplot
 h=figure();
 for i=varoffset:numelements-endoffset
     subplot(3,4,i-varoffset+1)
@@ -124,6 +137,7 @@ sgtitle('WIRS')
 figname='WIRS';
 saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem],'tiffn')
 saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem],'fig')
+%{
 h=figure();
 for i=varoffset:numelements-endoffset
     subplot(3,4,i-varoffset+1)
@@ -141,3 +155,4 @@ sgtitle('Rank Sort')
 figname='Rank_Sort';
 saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem],'tiffn')
 saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem],'fig')
+%}
