@@ -1,0 +1,11 @@
+ Element    At. No. Line s. Netto  Mass  Mass Norm. Atom   abs. error [%] abs. error [%] abs. error [%] rel. error [%] rel. error [%] rel. error [%]
+                                   [%]   [%]        [%]    (1 sigma)      (2 sigma)      (3 sigma)      (1 sigma)      (2 sigma)      (3 sigma)     
+ Titanium   22      K-Serie 16987  2.18  4.75       6.18   0.06           0.13           0.19           2.86           5.72           8.59          
+ Chromium   24      K-Serie 44360  9.74  21.20      25.38  0.25           0.51           0.76           2.59           5.19           7.78          
+ Cobalt     27      L-Serie 185652 6.43  13.99      14.78  0.18           0.35           0.53           2.75           5.49           8.24          
+ Nickel     28      L-Serie 491871 19.81 43.13      45.74  0.54           1.08           1.61           2.72           5.43           8.15          
+ Niobium    41      L-Serie 14868  0.89  1.94       1.30   0.04           0.07           0.11           4.11           8.22           12.32         
+ Molybdenum 42      L-Serie 35744  2.28  4.96       3.22   0.06           0.12           0.18           2.70           5.39           8.09          
+ Tantalum   73      M-Serie 18649  1.07  2.34       0.80   0.06           0.11           0.17           5.21           10.41          15.62         
+ Tungsten   74      M-Serie 60369  3.53  7.69       2.60   0.11           0.21           0.32           2.99           5.99           8.98          
+                            Sum    45.94 100.00     100.00                                                                                          
