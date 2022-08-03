@@ -1,7 +1,7 @@
 %Core variables to adjust
 %---------------------------------------------------------------------------------------
-Baseelem='Nickel';
-SEM='Sigma';%Sigma or Quanta or Tescan
+Baseelem='Al';
+SEM='Tescan';%Sigma or Quanta or Tescan
 %----------------------------------------------------------------------------------------------
 %{
 %% segregation data - if we know which direction things go
@@ -30,7 +30,7 @@ elseif strcmp(SEM,'Sigma')
     vals=data(strcmp(data.Spectrum,{'Spectrum' }),:);
     err=data(~strcmp(data.Spectrum,{'Spectrum' }),:);
     err.Properties.VariableNames=[err.Properties.VariableNames{1},err.Properties.VariableNames(3:end),'NAV'];
-    signame={'SigmaMean'};
+    signame={'Sigma'    };
     err=movevars(err,"NAV","After","Spectrum");
     varoffset=3;
     endoffset=1;
@@ -50,7 +50,7 @@ elseif strcmp(SEM,'Tescan')
 %     err2 = array2table(err2.');
 %     err2.Properties.VariableNames = err.Statistics;
 %     err2.element=err.Properties.VariableNames
-    err=array2table(ones([1,length(vals.Properties.VariableNames)]).*0.1);
+    err=array2table(zeros([1,length(vals.Properties.VariableNames)]));
     err.Properties.VariableNames=vals.Properties.VariableNames;
     err.Spectrum={'Sigma'};
     signame={'Sigma'};
