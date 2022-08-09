@@ -1,7 +1,7 @@
 %Core variables to adjust
 %---------------------------------------------------------------------------------------
-Baseelem='Nickel';
-SEM='Sigma';%Sigma or Quanta or Tescan
+Baseelem='Al';
+SEM='Tescan';%Sigma or Quanta or Tescan
 %----------------------------------------------------------------------------------------------
 %{
 %% segregation data - if we know which direction things go
@@ -44,11 +44,11 @@ elseif strcmp(SEM,'Tescan')
     vals{a,b}=0;
     varoffset=1;
     endoffset=0;
-%     err=readtable([EDSpath,EDSfile],'NumHeaderLines',1,'ReadVariableNames',true);
-%     err=err(1:4,:);
-%     err2 = table2array(err(:,2:end));
-%     err2 = array2table(err2.');
-%     err2.Properties.VariableNames = err.Statistics;
+    err=readtable([EDSpath,EDSfile],'NumHeaderLines',1,'ReadVariableNames',true);
+    err=err(1:4,:);
+    err2 = table2array(err(:,2:6));
+    err2 = array2table(err2.');
+    err2.Properties.VariableNames = err.Statistics;
 %     err2.element=err.Properties.VariableNames
     err=array2table(ones([1,length(vals.Properties.VariableNames)]).*0.1);
     err.Properties.VariableNames=vals.Properties.VariableNames;
@@ -63,8 +63,8 @@ figure()
 scatter(vals.Ni,vals.Ta)
 %}
 h=figure();
-corrplot(vals)
-%corrplot(vals(:,varoffset:numelements-endoffset))
+%corrplot(vals)
+corrplot(vals(:,varoffset:numelements-endoffset))
 figname='CorrPlot';
 saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem],'tiffn')
 saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem],'fig')
@@ -153,15 +153,16 @@ saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem],'fig')
 h=figure();
 for i=varoffset:numelements-endoffset
     subplot(3,4,i-varoffset+1)
-    scatter(vals.WIRSFs,table2array(vals(:,i)))
+    scatter(vals.WIRSFs,table2array(vals(:,i)),'r.')
     ylabel('Wt %')
     xlabel('Fs')
     title(vals.Properties.VariableNames{i})
 end
 sgtitle('WIRS')
 figname='WIRS';
-saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem],'tiffn')
-saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem],'fig')
+%saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem,'.tif'],'tiffn')
+print(h,[EDSfile(1:end-4),figname,'_V2_base_',Baseelem,'.tif'],'-dpng','-r1200');
+saveas(h,[EDSfile(1:end-4),figname,'_base_',Baseelem,'.fig'],'fig')
 %{
 h=figure();
 for i=varoffset:numelements-endoffset
